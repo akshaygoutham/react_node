@@ -2,17 +2,13 @@ pipeline {
     agent any
     environment {
         DOCKER_HUB_REPO = "akshaygoutham3277/react-node"
+        VERSION = "${BUILD_NUMBER}-${new Date().format('yyyyMMddHHmmss')}"
+        BACKEND_DOC_IMG = "${DOCKER_HUB_REPO}-backend"
+        FRONTEND_DOC_IMG = "${DOCKER_HUB_REPO}-frontend"
+        BACKEND_TAG = "${BACKEND_DOC_IMG}:${VERSION}"
+        FRONTEND_TAG = "${FRONTEND_DOC_IMG}:${VERSION}"
     }
     stages {
-        stage('Set Version') {
-            steps {
-                script {
-                    env.VERSION = "${BUILD_NUMBER}-${new Date().format('yyyyMMddHHmmss')}"
-                    env.BACKEND_DOC_IMG = "${DOCKER_HUB_REPO}-backend"
-                    env.FRONTEND_DOC_IMG = "${DOCKER_HUB_REPO}-frontend"
-                }
-            }
-        }
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/akshaygoutham/react_node.git'
@@ -20,23 +16,22 @@ pipeline {
         }
         stage('Build backend image') {
             steps {
-                script {
-                    def backendTag = "${BACKEND_DOC_IMG}:${VERSION}"
-                    sh """
-                    docker build -t ${backendTag} ./backend/
-                    """
-                    echo "Backend image built: ${backendTag}"
-                }
+                sh "docker build -t ${BACKEND_TAG} ./backend/"
+                echo "Backend image built: ${BACKEND_TAG}"
             }
         }
         stage('Build frontend image') {
             steps {
-                script {
-                    def frontendTag = "${FRONTEND_DOC_IMG}:${VERSION}"
-                    sh """
-                    docker build -t ${frontendTag} ./frontend/
-                    """
-                    echo "Frontend image built: ${frontendTag}"
+                sh "docker build -t ${FRONTEND_TAG} ./frontend/"
+                echo "Frontend image built: ${FRONTEND_TAG}"
+            }
+        }
+        stage ('Push to Docker Hub') {
+            steps {
+                withDockerRegistry([credentialsId: 'dockerhubcred']) {
+                    sh "docker push ${BACKEND_TAG}"
+                    sh "docker push ${FRONTEND_TAG}"
+                    echo "Images pushed successfully!"
                 }
             }
         }
