@@ -1,29 +1,29 @@
 pipeline {
     agent any
     environment {
-        BACKEND_DOC_IMG="back"
-        FRONTEND_DOC_IMG="front"
+        BACKEND_DOC_IMG = "back"
+        FRONTEND_DOC_IMG = "front"
     }
     stages {
-        stage ('checkout') {
+        stage('Checkout') {
             steps {
-                branch : 'main' , url: 'https://github.com/akshaygoutham/react_node.git'
+                git branch: 'main', url: 'https://github.com/akshaygoutham/react_node.git'
             }
         }
-        stage ('Build backend image') {
+        stage('Build backend image') {
             steps {
                 script {
-                    sh ''' 
-                    docker build -t $BACKEND_DOC_IMG ./backend/
+                    sh '''
+                    docker build -t "$BACKEND_DOC_IMG" ./backend/
                     '''
                 }
             }
         }
-        stage ('Build frontend image') {
+        stage('Build frontend image') {
             steps {
                 script {
-                    sh ''' 
-                    docker build -t $FRONTEND_DOC_IMG ./frontend/
+                    sh '''
+                    docker build -t "$FRONTEND_DOC_IMG" ./frontend/
                     '''
                 }
             }
@@ -31,10 +31,10 @@ pipeline {
     }
     post {
         success {
-            echo "success"
+            echo "Pipeline executed successfully!"
         }
         failure {
-            echo " failed"
+            echo "Pipeline execution failed!"
         }
     }
 }
