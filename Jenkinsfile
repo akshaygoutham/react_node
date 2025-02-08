@@ -2,9 +2,17 @@ pipeline {
     agent any
     environment {
         DOCKER_HUB_REPO = "akshaygoutham3277/react-node"
-        VERSION = "${BUILD_NUMBER}-${new Date().format('yyyyMMddHHmmss')}"
     }
     stages {
+        stage('Set Version') {
+            steps {
+                script {
+                    env.VERSION = "${BUILD_NUMBER}-${new Date().format('yyyyMMddHHmmss')}"
+                    env.BACKEND_DOC_IMG = "${DOCKER_HUB_REPO}-backend"
+                    env.FRONTEND_DOC_IMG = "${DOCKER_HUB_REPO}-frontend"
+                }
+            }
+        }
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/akshaygoutham/react_node.git'
