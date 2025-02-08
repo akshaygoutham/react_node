@@ -28,7 +28,7 @@ pipeline {
         }
         stage ('Push to Docker Hub') {
             steps {
-                withDockerRegistry([credentialsId: 'dockerhubcred']) {
+                withDockerRegistry([credentialsId: 'dockercred']) {
                     sh "docker push ${BACKEND_TAG}"
                     sh "docker push ${FRONTEND_TAG}"
                     echo "Images pushed successfully!"
