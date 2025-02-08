@@ -1,8 +1,7 @@
 pipeline {
     agent any
     environment {
-        BACKEND_DOC_IMG = "backend-img"
-        FRONTEND_DOC_IMG = "frontend-img"
+        DOCKER_HUB_REPO = "akshaygoutham3277/react-node"
         VERSION = "${BUILD_NUMBER}-${new Date().format('yyyyMMddHHmmss')}"
     }
     stages {
@@ -16,8 +15,7 @@ pipeline {
                 script {
                     def backendTag = "${BACKEND_DOC_IMG}:${VERSION}"
                     sh """
-                    docker build -t ${backendTag} ./backend/
-                    docker tag ${backendTag} ${BACKEND_DOC_IMG}:latest
+                    docker build -t ${backendTag} ./backend
                     """
                     echo "Backend image built: ${backendTag}"
                 }
@@ -29,7 +27,6 @@ pipeline {
                     def frontendTag = "${FRONTEND_DOC_IMG}:${VERSION}"
                     sh """
                     docker build -t ${frontendTag} ./frontend/
-                    docker tag ${frontendTag} ${FRONTEND_DOC_IMG}:latest
                     """
                     echo "Frontend image built: ${frontendTag}"
                 }
