@@ -15,7 +15,7 @@ pipeline {
                 script {
                     def backendTag = "${BACKEND_DOC_IMG}:${VERSION}"
                     sh """
-                    docker build -t ${backendTag} ./backend
+                    docker build -t ${backendTag} ./backend/
                     """
                     echo "Backend image built: ${backendTag}"
                 }
